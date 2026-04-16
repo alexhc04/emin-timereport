@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EMIN — Acceso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0d1b2a;
+      --navy2:   #1a2e45;
+      --gold:    #c9a84c;
+      --gold2:   #e8c97a;
+      --cream:   #f5f0e8;
+      --white:   #ffffff;
+      --gray:    #8a9ab0;
+      --red:     #c94c4c;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Fondo decorativo */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 50%, rgba(201,168,76,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 20%, rgba(26,46,69,0.8) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Líneas decorativas */
+    .deco-lines {
+      position: fixed;
+      top: 0; right: 0;
+      width: 40%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .deco-lines::before, .deco-lines::after {
+      content: '';
+      position: absolute;
+      border: 1px solid rgba(201,168,76,0.12);
+      border-radius: 50%;
+    }
+    .deco-lines::before {
+      width: 600px; height: 600px;
+      top: -200px; right: -200px;
+    }
+    .deco-lines::after {
+      width: 400px; height: 400px;
+      top: 100px; right: -100px;
+    }
+
+    .login-container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      width: 100%;
+      max-width: 980px;
+      min-height: 560px;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+    }
+
+    /* Panel izquierdo - branding */
+    .brand-panel {
+      flex: 1.2;
+      background: linear-gradient(155deg, var(--navy2) 0%, #0a1520 100%);
+      padding: 60px 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid rgba(201,168,76,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-panel::after {
+      content: 'EMIN';
+      position: absolute;
+      bottom: -60px; right: -30px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 180px;
+      font-weight: 300;
+      color: rgba(201,168,76,0.04);
+      letter-spacing: -5px;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .brand-logo {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .brand-logo-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 8px;
+      line-height: 1;
+    }
+
+    .brand-logo-sub {
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--gray);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .brand-divider {
+      width: 40px;
+      height: 1px;
+      background: var(--gold);
+      margin: 32px 0;
+      opacity: 0.6;
+    }
+
+    .brand-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.5;
+      max-width: 280px;
+    }
+
+    .brand-tagline em {
+      color: var(--gold);
+      font-style: normal;
+    }
+
+    .brand-footer {
+      font-size: 11px;
+      color: rgba(138,154,176,0.6);
+      letter-spacing: 1px;
+    }
+
+    /* Panel derecho - formulario */
+    .form-panel {
+      flex: 1;
+      background: var(--white);
+      padding: 60px 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .form-subtitle {
+      font-size: 13px;
+      color: var(--gray);
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--navy);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid #dde3ed;
+      border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--navy);
+      background: #fafbfc;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--navy2);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(26,46,69,0.08);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-login::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(201,168,76,0.15));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn-login:hover {
+      background: var(--navy2);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(13,27,42,0.3);
+    }
+    .btn-login:hover::after { opacity: 1; }
+    .btn-login:active { transform: translateY(0); }
+
+    .btn-login.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .error-msg {
+      display: none;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: var(--red);
+      padding: 10px 14px;
+      border-radius: 3px;
+      font-size: 13px;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .error-msg.visible { display: block; }
+
+    /* Credenciales de demo */
+    .demo-info {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #eef0f4;
+    }
+
+    .demo-info p {
+      font-size: 11px;
+      color: var(--gray);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .demo-creds {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .demo-cred {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background: #f8f9fb;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .demo-cred:hover { background: #eef0f4; }
+
+    .demo-cred span { font-size: 12px; color: var(--navy); }
+    .demo-cred .badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 2px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .badge-admin { background: rgba(201,168,76,0.15); color: #8a6a1e; }
+    .badge-worker { background: rgba(26,46,69,0.08); color: var(--navy2); }
+
+    @media (max-width: 700px) {
+      .brand-panel { display: none; }
+      .form-panel { padding: 40px 28px; }
+      .login-container { max-width: 420px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deco-lines"></div>
+
+  <div class="login-container">
+    <!-- Panel de Marca -->
+    <div class="brand-panel">
+      <div>
+        <div class="brand-logo">
+          <div class="brand-logo-mark">EMIN</div>
+          <div class="brand-logo-sub">Despacho de Abogados</div>
+        </div>
+        <div class="brand-divider"></div>
+        <div class="brand-tagline">
+          Control horario <em>profesional</em> para tu equipo jurídico
+        </div>
+      </div>
+      <div class="brand-footer">© 2024 Emin Abogados · Sistema de Gestión</div>
+    </div>
+
+    <!-- Panel de Formulario -->
+    <div class="form-panel">
+      <div class="form-title">Bienvenido</div>
+      <div class="form-subtitle">Introduce tus credenciales para acceder al sistema</div>
+
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <input type="text" id="username" placeholder="Tu nombre de usuario" autocomplete="username" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+
+      <button class="btn-login" id="btnLogin">Acceder al Sistema</button>
+
+      <div class="error-msg" id="errorMsg">Usuario o contraseña incorrectos</div>
+
+      <!-- Credenciales iniciales de acceso -->
+      <div class="demo-info">
+        <p>Accesos iniciales (clic para autocompletar)</p>
+        <div class="demo-creds">
+          <div class="demo-cred" onclick="fillCreds('admin', 'Emin2024!')">
+            <span>admin / Emin2024!</span>
+            <span class="badge badge-admin">CEO</span>
+          </div>
+          <div class="demo-cred" onclick="fillCreds('trabajador1', 'Emin2024!')">
+            <span>trabajador1 / Emin2024!</span>
+            <span class="badge badge-worker">Worker</span>
+          </div>
+          <div class="demo-cred" onclick="fillCreds('trabajador2', 'Emin2024!')">
+            <span>trabajador2 / Emin2024!</span>
+            <span class="badge badge-worker">Worker</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function fillCreds(user, pass) {
+      document.getElementById('username').value = user;
+      document.getElementById('password').value = pass;
+      document.getElementById('errorMsg').classList.remove('visible');
+    }
+
+    async function doLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('btnLogin');
+      const err = document.getElementById('errorMsg');
+
+      if (!username || !password) {
+        err.textContent = 'Por favor introduce usuario y contraseña';
+        err.classList.add('visible');
+        return;
+      }
+
+      btn.textContent = 'Verificando...';
+      btn.classList.add('loading');
+      err.classList.remove('visible');
+
+      try {
+        const res = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          btn.textContent = '✓ Accediendo...';
+          window.location.href = '/dashboard';
+        } else {
+          err.textContent = data.error || 'Usuario o contraseña incorrectos';
+          err.classList.add('visible');
+          btn.textContent = 'Acceder al Sistema';
+          btn.classList.remove('loading');
+        }
+      } catch (e) {
+        err.textContent = 'Error de conexión. Inténtalo de nuevo.';
+        err.classList.add('visible');
+        btn.textContent = 'Acceder al Sistema';
+        btn.classList.remove('loading');
+      }
+    }
+
+    document.getElementById('btnLogin').addEventListener('click', doLogin);
+    document.getElementById('password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doLogin();
+    });
+    document.getElementById('username').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('password').focus();
+    });
+  </script>
+</body>
+</html>
