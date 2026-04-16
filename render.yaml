@@ -1,0 +1,22 @@
+# render.yaml - Configuración de despliegue en Render.com
+
+services:
+  - type: web
+    name: emin-timereport
+    env: python
+    runtime: python
+    pythonVersion: "3.11.9"
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 2 --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: emin-db
+          property: connectionString
+
+databases:
+  - name: emin-db
+    databaseName: emin_timereport
+    user: emin_user
