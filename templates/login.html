@@ -360,34 +360,11 @@
 
       <div class="error-msg" id="errorMsg">Usuario o contraseña incorrectos</div>
 
-      <!-- Credenciales iniciales de acceso -->
-      <div class="demo-info">
-        <p>Accesos iniciales (clic para autocompletar)</p>
-        <div class="demo-creds">
-          <div class="demo-cred" onclick="fillCreds('admin', 'Emin2024!')">
-            <span>admin / Emin2024!</span>
-            <span class="badge badge-admin">CEO</span>
-          </div>
-          <div class="demo-cred" onclick="fillCreds('trabajador1', 'Emin2024!')">
-            <span>trabajador1 / Emin2024!</span>
-            <span class="badge badge-worker">Worker</span>
-          </div>
-          <div class="demo-cred" onclick="fillCreds('trabajador2', 'Emin2024!')">
-            <span>trabajador2 / Emin2024!</span>
-            <span class="badge badge-worker">Worker</span>
-          </div>
-        </div>
-      </div>
+
     </div>
   </div>
 
   <script>
-    function fillCreds(user, pass) {
-      document.getElementById('username').value = user;
-      document.getElementById('password').value = pass;
-      document.getElementById('errorMsg').classList.remove('visible');
-    }
-
     async function doLogin() {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
