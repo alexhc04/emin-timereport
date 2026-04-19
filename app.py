@@ -290,16 +290,20 @@ def get_resumen():
     filtro_usuario = request.args.get('usuario_id')
     filtro_desde   = request.args.get('fecha_desde')
     filtro_hasta   = request.args.get('fecha_hasta')
+    solo_hoy       = request.args.get('solo_hoy', 'false') == 'true'
 
     query = Tarea.query
     if rol == 'worker':
         query = query.filter_by(usuario_id=user_id)
     elif rol == 'admin' and filtro_usuario:
         query = query.filter_by(usuario_id=filtro_usuario)
-    if filtro_desde:
-        query = query.filter(Tarea.fecha >= filtro_desde)
-    if filtro_hasta:
-        query = query.filter(Tarea.fecha <= filtro_hasta)
+    if solo_hoy:
+        query = query.filter(Tarea.fecha == date.today())
+    else:
+        if filtro_desde:
+            query = query.filter(Tarea.fecha >= filtro_desde)
+        if filtro_hasta:
+            query = query.filter(Tarea.fecha <= filtro_hasta)
 
     tareas = query.all()
     prod   = sum(t.duracion_horas() for t in tareas if     t.es_productiva())
