@@ -18,11 +18,11 @@
       --red:     #c94c4c; --red-bg: #fef2f2;
       --sidebar-w: 240px;
     }
-    html, body { height: 100%; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); display: flex; }
+    html { height: 100%; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100%; }
 
     /* SIDEBAR */
-    .sidebar { width: var(--sidebar-w); background: var(--navy); height: 100vh; position: fixed; top:0; left:0; display:flex; flex-direction:column; z-index:100; }
+    .sidebar { width: var(--sidebar-w); background: var(--navy); height: 100vh; position: fixed; top:0; left:0; display:flex; flex-direction:column; z-index:100; overflow-y:auto; }
     .sidebar-brand { padding: 28px 24px 20px; border-bottom: 1px solid rgba(201,168,76,.15); }
     .sidebar-logo { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:600; color:var(--gold); letter-spacing:5px; }
     .sidebar-tagline { font-size:9px; color:var(--gray); letter-spacing:2.5px; text-transform:uppercase; margin-top:4px; }
@@ -42,10 +42,10 @@
 
     /* MAIN */
     .main { margin-left:var(--sidebar-w); flex:1; min-height:100vh; display:flex; flex-direction:column; }
-    .topbar { background:#fff; border-bottom:1px solid var(--gray2); padding:0 32px; height:64px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+    .topbar { background:#fff; border-bottom:1px solid var(--gray2); padding:0 32px; height:64px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; flex-shrink:0; }
     .topbar-title { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--navy); }
     .topbar-date { font-size:12px; color:var(--gray); }
-    .content { flex:1; padding:28px 32px; overflow-y:auto; }
+    .content { flex:1; padding:28px 32px; overflow-x:hidden; }
 
     /* STATS */
     .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:28px; }
@@ -99,7 +99,7 @@
     .filter-group input:focus, .filter-group select:focus { border-color:var(--navy2); }
 
     /* TABLE */
-    .table-wrapper { overflow-x:auto; }
+    .table-wrapper { overflow-x:auto; overflow-y:visible; max-height:none; }
     table { width:100%; border-collapse:collapse; font-size:12px; }
     thead th { padding:10px 12px; text-align:left; font-size:9px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--gray); background:#f8f9fb; border-bottom:1px solid var(--gray2); white-space:nowrap; }
     tbody tr { border-bottom:1px solid #f0f2f7; transition:background .12s; }
@@ -703,17 +703,27 @@
   }
 
   // ── EXPORTAR EXCEL ──
-  function exportarExcel(todos = false) {
+  // Recoge exactamente los filtros activos en pantalla
+  function exportarExcel(seccion) {
     const p = new URLSearchParams();
-    const dni    = document.getElementById('filDni')?.value.trim()    || '';
-    const bitrix = document.getElementById('filBitrix')?.value.trim() || '';
-    const desde  = document.getElementById('filDesde')?.value         || '';
-    const hasta  = document.getElementById('filHasta')?.value         || '';
-    if (dni)    p.set('dni_nif',    dni);
-    if (bitrix) p.set('ref_bitrix', bitrix);
+    // Determinar qué sección está activa si no se pasa parámetro
+    if (!seccion) {
+      const adminVisible = document.getElementById('section-admin') &&
+                           document.getElementById('section-admin').style.display !== 'none';
+      seccion = adminVisible ? 'admin' : 'tareas';
+    }
+    const prefijo = (seccion === 'admin') ? 'adminFil' : 'fil';
+    const user   = document.getElementById(prefijo + 'User')?.value          || '';
+    const dni    = document.getElementById(prefijo + 'Dni')?.value.trim()    || '';
+    const bitrix = document.getElementById(prefijo + 'Bitrix')?.value.trim() || '';
+    const desde  = document.getElementById(prefijo + 'Desde')?.value         || '';
+    const hasta  = document.getElementById(prefijo + 'Hasta')?.value         || '';
+    if (user)   p.set('usuario_id',  user);
+    if (dni)    p.set('dni_nif',     dni);
+    if (bitrix) p.set('ref_bitrix',  bitrix);
     if (desde)  p.set('fecha_desde', desde);
     if (hasta)  p.set('fecha_hasta', hasta);
-    showToast('📥 Generando Excel...', 'success');
+    showToast('📥 Exportando con los filtros activos...', 'success');
     window.location.href = '/api/exportar?' + p;
   }
 
